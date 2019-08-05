@@ -4,6 +4,8 @@ import main.PhotoCheck;
 import model.DataModel;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.io.File;
 
@@ -13,7 +15,7 @@ public class MainGUI extends JFrame {
     private JTextField tfFolderPath = new JTextField();
     private JTextField tfGray = new JTextField();
     private JTextField tfColor = new JTextField();
-    private JButton btnTarget = new JButton("Browse");
+    private JButton btnBrowse = new JButton("Browse");
     private JButton btnRun = new JButton("Run");
     private DataModel dm;
     private JFileChooser jfc = new JFileChooser(".");
@@ -54,7 +56,7 @@ public class MainGUI extends JFrame {
 
         pnlTarget.add(lblFolder);
         pnlTarget.add(tfFolderPath);
-        pnlTarget.add(btnTarget);
+        pnlTarget.add(btnBrowse);
         pnlGray.add(lblGray);
         pnlGray.add(tfGray);
         pnlColor.add(lblColor);
@@ -73,14 +75,32 @@ public class MainGUI extends JFrame {
 
         progress.setStringPainted(true);
 
-        btnTarget.addActionListener(e -> {
+        btnBrowse.addActionListener(e -> {
             jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             if (jfc.showOpenDialog(this) == jfc.getApproveButtonMnemonic()) {
                 if (jfc.getSelectedFile() == null)
                     return;
                 tfFolderPath.setText(jfc.getSelectedFile().toString());
-                tfGray.setText(jfc.getSelectedFile().toString() + File.separatorChar + "greyscale");
-                tfColor.setText(jfc.getSelectedFile().toString() + File.separatorChar + "color");
+            }
+        });
+
+        tfFolderPath.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                tfGray.setText(tfFolderPath.getText() + File.separatorChar + "greyscale");
+                tfColor.setText(tfFolderPath.getText() + File.separatorChar + "color");
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                tfGray.setText(tfFolderPath.getText() + File.separatorChar + "greyscale");
+                tfColor.setText(tfFolderPath.getText() + File.separatorChar + "color");
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                tfGray.setText(tfFolderPath.getText() + File.separatorChar + "greyscale");
+                tfColor.setText(tfFolderPath.getText() + File.separatorChar + "color");
             }
         });
 
